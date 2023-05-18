@@ -3,10 +3,10 @@ use std::fs::{self, File};
 use std::env;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::process::Command;
+
 use reqwest;
-use std::thread;
-use std::time::Duration;
+
+
 
 fn main() {
     let aqpm_version = env!("CARGO_PKG_VERSION");
