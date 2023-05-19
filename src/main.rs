@@ -3,19 +3,24 @@ use std::fs::{self, File};
 use std::env;
 use std::collections::HashMap;
 use std::path::PathBuf;
-
-use reqwest;
-
-
+use std::process::{Command, exit};
+use reqwest::{self};
 
 fn main() {
     let aqpm_version = env!("CARGO_PKG_VERSION");
     let username = env::var("USERNAME").unwrap_or_else(|_| "user".to_owned());
-    print!("Aqpm Package Manager [Version {}]\n(c) 2023 ACHROMATIC LTD. All Rights Reserved.\n\nAqpm\\{}> Enter an app to install (or :l to list apps): ", aqpm_version, username);
+    print!("Aqpm Package Manager [Version {}]\n(c) 2023 ACHROMATIC LTD. All Rights Reserved.\n", aqpm_version);
+    
+    loop {
+    print!("\nAqpm\\{}> Enter an app to install (:l to list apps | :x to exit): ", username);
     io::stdout().flush().expect("An error occurred.");
 
     let mut uinp = String::new();
-    io::stdin().read_line(&mut uinp).expect("An error occurred.");
+    io::stdin()
+
+    .read_line(&mut uinp)
+    .expect("An error occurred.");
+
     uinp = uinp.to_lowercase().trim().to_owned();
 
     let mut apps = HashMap::<String, String>::new();
@@ -50,24 +55,51 @@ fn main() {
                 fs::create_dir(&aqtmp_dir).expect("Unable to create directory: C:\\Users\\{username}\\AppData\\Local\\AQTMP");
             }
 
-            let file_path = format!("C:\\Users\\{}\\AppData\\Local\\AQTMP\\{}.exe", username, uinp);
-            let mut file = File::create(&file_path).expect("Failed to create file");
+            let filepath = format!("C:\\Users\\{}\\AppData\\Local\\AQTMP\\{}.exe", username, uinp);
+            let mut file = File::create(&filepath).expect("Failed to create file");
 
             io::copy(&mut response.bytes().unwrap().as_ref(), &mut file).expect("Failed to write to file");
+            // drops process so it can be auto opened. reminder that im a FUCKING idiot!
+            drop(file);
 
-            println!("Aqpm\\{username}> Done. Check: C:\\Users\\{username}\\AppData\\Local\\AQTMP for the app. Auto Open coming soon.");
+            print!("Aqpm\\{username}> Done. Do you want to open it?: ");
+            io::stdout().flush().expect("An error occured.");
+
+            let mut autopenput = String::new();
+
+            io::stdin()
+            .read_line(&mut autopenput)
+            .expect("An error occured.");
+
+            if autopenput.trim().to_lowercase() == "y" {
+                println!("Aqpm\\{username}\\> Auto Opening: {uinp}.exe");
+                Command::new(format!("C:\\Users\\{}\\AppData\\Local\\AQTMP\\{}.exe", username, uinp)).spawn().expect("An error occured.");
+            }
+            else if autopenput.trim().to_lowercase() == "n" {
+                println!("Aqpm\\{username}> Auto Open Cancelled.")}
+            else if autopenput.trim().to_lowercase().starts_with("n"){
+                println!("Aqpm\\{username}> Invalid input. Assuming you meant: 'n'.")}
+            else if autopenput.trim().to_lowercase().ends_with("n"){
+                println!("Aqpm\\{username}> Invalid input. Assuming you meant: 'n'.")}
+            else {
+                println!("Aqpm\\{username}> Invalid input.")
+            }
+
             io::stdout().flush().expect("An error occurred.");
         } else if user_confirmation == "n" {
             println!("Aqpm\\{}> Aborted.", username);
         }
     } else if uinp == ":l" {
-        println!("Aqpm\\{}> All apps available: ", username);
+        print!("Aqpm\\{}> All apps available: ", username);
         for (i, (app, _)) in apps.iter().enumerate() {
             if i < apps.len() - 1 {
                 print!("{}, ", app);
             } else {
                 println!("{}", app);
             }
+        }
+    } else if uinp.trim().to_lowercase() == ":x" {
+            exit(0);
         }
     }
 }
