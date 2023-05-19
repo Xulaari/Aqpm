@@ -26,7 +26,7 @@ fn main() {
     let mut apps = HashMap::<String, String>::new();
     apps.insert("discord".to_owned(), "https://discord.com/api/download?platform=win".to_owned());
     apps.insert("spotify".to_owned(), "https://github.com/amd64fox/SpotX/releases/download/1.7/Install_Prem.bat".to_owned());
-    apps.insert("vscode".to_owned(), "https://code.visualstudio.com/docs/?dv=win".to_owned());
+    apps.insert("vscode".to_owned(), "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user".to_owned());
     apps.insert("vscodium".to_owned(), "https://github.com/VSCodium/vscodium/releases/download/1.78.2.23132/VSCodiumUserSetup-x64-1.78.2.23132.exe".to_owned());
     apps.insert("git".to_owned(), "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe".to_owned());
     apps.insert("vencord".to_owned(), "https://github.com/Vencord/Installer/releases/latest/download/VencordInstaller.exe".to_owned());
